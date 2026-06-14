@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+twilio
+elevenlabs
+google-genai
+python-dotenv
+twilio
