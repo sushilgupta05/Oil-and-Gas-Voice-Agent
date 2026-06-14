@@ -2,7 +2,6 @@ import os
 from fastapi import FastAPI, Request, Response
 from fastapi.staticfiles import StaticFiles
 from twilio.twiml.voice_response import VoiceResponse, Gather
-
 from agent import get_agent_response
 from voice import generate_voice
 
@@ -17,17 +16,12 @@ async def incoming_call(request: Request):
     Endpoint 1: Triggered when someone dials your Twilio phone number.
     """
     response = VoiceResponse()
-    
-    # FIX: Increased timeout to 5 so you have time to start speaking
-    gather = Gather(input='speech', action='/process-speech', timeout=5, speechTimeout='2')
-    
-    # Play the pre-generated ElevenLabs file
+    gather = Gather(input='speech', action='/process-speech', timeout=5, speechTimeout=2)
     base_url = str(request.base_url).rstrip('/')
     gather.play(f"{base_url}/audio/greeting.mp3")
     
     response.append(gather)
     
-    # FIX: Safety net. If you don't speak, loop back to the beginning instead of hanging up
     response.redirect('/incoming-call')
     
     return Response(content=str(response), media_type="application/xml")
@@ -68,11 +62,9 @@ async def process_speech(request: Request):
     else:
         response.say(ai_text, voice='alice')
 
-    # FIX: Increased timeout to 5 for the follow-up question
-    gather = Gather(input='speech', action='/process-speech', timeout=5, speechTimeout='2')
+    gather = Gather(input='speech', action='/process-speech', timeout=5, speechTimeout=2)
     response.append(gather)
     
-    # FIX: Safety net for the loop
     response.redirect('/incoming-call')
 
     return Response(content=str(response), media_type="application/xml")
