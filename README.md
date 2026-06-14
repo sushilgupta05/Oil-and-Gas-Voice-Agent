@@ -12,10 +12,6 @@ Powered by **Google Gemini 2.5 Flash** and **ElevenLabs**, this conversational A
 
 The agent utilizes a rigid system prompt. If asked an off-topic question (e.g., weather, sports, trivia), it politely declines and re-centers the conversation on the oil and gas sector.
 
-### ⚡ Low-Latency Architecture
-
-Optimized token generation limits and aggressive Twilio speech-timeout parameters ensure fast, natural conversational pacing.
-
 ### 🎙️ Unified Voice Experience
 
 Seamlessly transitions between pre-generated static greetings and dynamically generated ElevenLabs text-to-speech to prevent voice mismatch.
@@ -24,48 +20,8 @@ Seamlessly transitions between pre-generated static greetings and dynamically ge
 
 Intelligently handles caller silence by re-prompting the user and looping the webhook flow to prevent accidental call drops.
 
----
 
-# 📞 Option 1: Try the Live Cloud Demo (Direct Call)
-
-The fastest way to test the agent is to call the live deployment hosted on Render.
-
-## Step 1: Wake the Server
-
-Open your browser and visit:
-
-```text
-https://your-render-app.onrender.com
-```
-
-> **Note**
->
-> Since the backend is hosted on a free-tier instance, it automatically sleeps after periods of inactivity. Visiting the URL wakes the server before placing a call.
->
-> The page may display **"Not Found"** — this is expected behavior and simply indicates the server is awake.
-
-## Step 2: Dial the Agent
-
-Call your Twilio phone number:
-
-```text
-+1 XXX XXX XXXX
-```
-
-## Step 3: Start Talking
-
-Wait for the greeting to finish, then ask an oil and gas related question.
-
-### Example Questions
-
-* What is the difference between upstream and downstream operations?
-* How does hydraulic fracturing work?
-* What are the major refining processes?
-* What is LNG and how is it transported?
-
----
-
-# 💻 Option 2: Run Locally (Inbound Direct Call)
+# 💻 Option 1: Run Locally (Inbound Direct Call)
 
 In this setup, anyone can call your Twilio number and Twilio will route the conversation directly to your local machine.
 
@@ -95,6 +51,8 @@ Create a file named `.env` in the project root directory:
 ```env
 GEMINI_API_KEY=your_gemini_api_key
 ELEVENLABS_API_KEY=your_elevenlabs_api_key
+TWILIO_ACCOUNT_SID=your_twilio_account_sid
+TWILIO_AUTH_TOKEN=your_twilio_auth_token
 ```
 
 ---
@@ -160,7 +118,7 @@ You should immediately see logs appearing in your FastAPI terminal as the AI pro
 
 ---
 
-# 📲 Option 3: Run Locally via Trigger Script (Outbound Call)
+# 📲 Option 2: Run Locally via Trigger Script (Outbound Call)
 
 Use this method if you cannot directly dial your Twilio number (for example, due to international calling restrictions).
 
@@ -249,6 +207,95 @@ Within a few seconds:
 
 ---
 
+# ☁️ Option 3: Deploy on Render (Recommended)
+
+Once you've tested the application locally, you can deploy it to Render for 24/7 access.
+
+## Step 1: Push Your Code to GitHub
+
+Make sure your project is committed and pushed to a GitHub repository.
+
+```bash
+git add .
+git commit -m "Initial deployment"
+git push origin main
+```
+
+---
+
+## Step 2: Create a Render Web Service
+
+1. Log in to Render.
+2. Click **New → Web Service**.
+3. Connect your GitHub account.
+4. Select this repository.
+5. Configure the service:
+
+```text
+Runtime: Python
+Build Command: pip install -r requirements.txt
+Start Command: uvicorn main:app --host 0.0.0.0 --port $PORT
+```
+
+6. Click **Create Web Service**.
+
+---
+
+## Step 3: Add Environment Variables
+
+In the Render dashboard, navigate to:
+
+```text
+Settings → Environment Variables
+```
+
+Add the following:
+
+```env
+GEMINI_API_KEY=your_gemini_api_key
+ELEVENLABS_API_KEY=your_elevenlabs_api_key
+
+TWILIO_ACCOUNT_SID=your_twilio_account_sid
+TWILIO_AUTH_TOKEN=your_twilio_auth_token
+```
+
+Save and redeploy the service.
+
+---
+
+## Step 4: Configure Twilio Webhook
+
+After deployment, Render will provide a URL similar to:
+
+```text
+https://your-app-name.onrender.com
+```
+
+Open Twilio Console and navigate to:
+
+```text
+Phone Numbers → Manage → Active Numbers
+```
+
+Select your Twilio number and set:
+
+```text
+https://your-app-name.onrender.com/incoming-call
+```
+
+under **"A Call Comes In"**.
+
+Save the configuration.
+
+---
+
+## Step 5: Call the Agent
+
+Dial your Twilio phone number.
+
+The call will be routed to your Render-hosted AI agent, allowing anyone with access to the number to interact with the system without running a local server.
+
+
 # 🏗️ Technology Stack
 
 | Component       | Technology              |
@@ -279,7 +326,7 @@ Within a few seconds:
 
 ---
 
-# ⚠️ Limitations
+# Important points
 
 * Designed exclusively for oil & gas industry discussions.
 * Free-tier hosting may introduce cold-start delays.
