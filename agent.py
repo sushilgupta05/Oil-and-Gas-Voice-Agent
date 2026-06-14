@@ -3,13 +3,10 @@ from google import genai
 from google.genai import types
 from dotenv import load_dotenv
 
-# Load API keys from the .env file
 load_dotenv()
 
-# Configure the new Gemini API client
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
-# The Guardrail: This forces the model to stay strictly on-topic
 SYSTEM_INSTRUCTION = """
 You are a highly knowledgeable, professional, and conversational AI assistant representing the Oil and Gas industry. 
 Your strict rule: You may ONLY answer questions related to the oil and gas domain (e.g., drilling, refining, pipelines, petroleum economics, geology, petrochemicals). 
@@ -25,8 +22,7 @@ def get_agent_response(user_query: str) -> str:
     and returns the strictly filtered text response.
     """
     try:
-        # Generate the response using the new SDK syntax
-        # We are using gemini-2.5-flash for the fastest possible real-time voice latency
+        
         response = client.models.generate_content(
             model='gemini-2.5-flash',
             contents=user_query,
@@ -41,7 +37,7 @@ def get_agent_response(user_query: str) -> str:
         print(f"LLM Error: {e}")
         return "I apologize, but I am having trouble connecting to my database right now. Please try your question again."
 
-# --- Quick Local Test ---
+
 if __name__ == "__main__":
     print("Testing Oil & Gas Query:")
     print(get_agent_response("What is the difference between upstream and downstream?"))
