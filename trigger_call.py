@@ -1,23 +1,23 @@
 import os
 from twilio.rest import Client
+from dotenv import load_dotenv
 
-ACCOUNT_SID = " "
-AUTH_TOKEN = " "
+load_dotenv()
 
-# The phone numbers
-TWILIO_NUMBER = " "  #write twilio US number here
-YOUR_NUMBER = " "  #write your number here to get a call
+ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
+AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
+TWILIO_NUMBER = os.getenv("TWILIO_NUMBER")
+YOUR_NUMBER = os.getenv("MY_PHONE_NUMBER")
 
-# Your current active ngrok URL
-NGROK_URL = "https://aerosol-kilowatt-dismount.ngrok-free.dev/incoming-call"
+RENDER_URL = "https://oil-and-gas-voice-agent.onrender.com/incoming-call"
 
 def make_call():
-    print("Instructing Twilio to dial your phone...")
+    print("Instructing Twilio to dial your phone via Render...")
     try:
         client = Client(ACCOUNT_SID, AUTH_TOKEN)
         
         call = client.calls.create(
-            url=NGROK_URL,
+            url=RENDER_URL,
             to=YOUR_NUMBER,
             from_=TWILIO_NUMBER
         )
