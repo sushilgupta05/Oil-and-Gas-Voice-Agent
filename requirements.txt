@@ -5,3 +5,4 @@ elevenlabs
 google-genai
 python-dotenv
 twilio
+python-multipart
